@@ -1,56 +1,38 @@
 // @ts-check
-import {requestCall} from '../support/requests.js';
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import {performRequest} from '../support/requests.js';
+import {getApiKey} from '../support/requests.js'
 
+let apiKey;
+let todoID;
+let dataObj = {
+  title: 'added new data' + Date.now(),
+  "description": "desc" + Date.now()
+};
 
-let header_xChallanger;
-let data =  {
-        title: 'added new data' + Date.now(),
-        "description": "",
-    };
-  
+const baseUrl = "https://apichallenges.herokuapp.com";
 
-test.describe("API requests examples", async () => {
-
-  const baseUrl = "https://apichallenges.herokuapp.com";
-
-  test.beforeAll("For getting header", async({request}) => {
-    const response = await request.post(`${baseUrl}/challenger`);
-    expect(response).toBeOK();
-    header_xChallanger = response.headers()['x-challenger'];
-    console.log(header_xChallanger);
-  });
-
-  test.only('POST request example', async ({request}) => {
-
-    const response = await requestCall(request, 'post', `${baseUrl}/todos`, header_xChallanger, data);
-    console.log(response);
+test.beforeAll("For getting header", async () => {
+  const response = await getApiKey('POST',`${baseUrl}/challenger`);
+  expect(response.ok).toBeTruthy();
+  apiKey = response.headers.get('x-challenger');
+  console.log(apiKey);
 });
-  
 
 
+test("POST request", async () => {
+  const response = await performRequest('POST', `${baseUrl}/todos`, dataObj, apiKey);
+  expect(response.ok).toBeTruthy();
+  const responseBody = JSON.parse(await response.text());
+  console.log(responseBody);
+  // todoID = responseBody.id;
+  // console.log(todoID);
+});
 
-
-  // test("GET request example", async({request}) => {
-
-  //   const response = await request.get(`/todos`);
-  //   const responseBody = JSON.parse(await response.text());
-  //   expect(response).toBeOK();
-  //   expect(responseBody.todos[0].title).toBe("pay invoices");
-  //   expect(responseBody.todos[0].doneStatus).toBeFalsy();
-  // })
-  
-
-  // test("POST request example", async({request}) => {
-
-  //   const response = await request.post(`/todos`, {
-  //     data: {
-  //       title: 'added new data',
-  //       "description": "",
-  //   }, 
-  //     headers:{
-  //     'X-CHALLENGER': header_xChallanger
-  //     }
-  //   });
-  //})
-})
+test("GET request", async () => {
+  const response = await performRequest('GET',`${baseUrl}/todos`);
+  expect(response.ok).toBeTruthy();
+  const responseBody = JSON.parse(await response.text());
+  expect(responseBody.todos[0].title).toBe("train staff");
+  expect(responseBody.todos[0].doneStatus).toBeFalsy();
+});
