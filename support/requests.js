@@ -4,12 +4,13 @@ export const performRequest = async (method, url, data, apiKey) => {
         method: method,
         headers: {
             'X-Challenger': apiKey
-        }
+        },
+        body : JSON.stringify(data)
     };
 
-    if (data) {
-        options.body = JSON.stringify(data);
-    }
+    // if (data) {
+    //     options.body = JSON.stringify(data);
+    // }
 
     return await fetch(url, options);
 }

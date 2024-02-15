@@ -1,45 +1,61 @@
 // @ts-check
 import { expect, test } from '@playwright/test';
-import {performRequest} from '../support/requests.js';
-import {getApiKey} from '../support/requests.js'
-import {jsonSchemeValidation, schemaTodo, schemaTodos } from '../support/schema.js';
+import { performRequest } from '../support/requests.js';
+import { getApiKey } from '../support/requests.js'
+import { jsonSchemeValidation, schemaTodo, schemaTodos } from '../support/schema.js';
+import { baseURL } from '../playwright.config.js';
+import { faker } from '@faker-js/faker';
+
 
 let apiKey;
 let todoID;
 let dataObj = {
-  title: 'added new data' + Date.now(),
-  "description": "desc" + Date.now()
+  title: faker.lorem.word(),
+  doneStatus: true,
+  description: faker.lorem.text(),
 };
 
-const baseUrl = "https://apichallenges.herokuapp.com";
 
-test.beforeAll("For getting header", async () => {
-  const response = await getApiKey('POST',`${baseUrl}/challenger`);
+test.beforeAll("For getting header-challenger", async () => {
+  const response = await getApiKey('POST', `${baseURL}/challenger`);
   expect(response.ok).toBeTruthy();
   apiKey = response.headers.get('x-challenger');
-  console.log(apiKey);
 });
 
-
-test("POST request", async () => {
-  const response = await performRequest('POST', `${baseUrl}/todos`, dataObj, apiKey);
+test("Should perform GET request and get all todos", async () => {
+  const response = await performRequest('GET',`${baseURL}/todos`);
   expect(response.ok).toBeTruthy();
-  expect(jsonSchemeValidation(response, schemaTodo));
   const responseBody = JSON.parse(await response.text());
-  console.log(responseBody);
-  todoID = responseBody.id;
-});
-
-test("GET request", async () => {
-  const response = await performRequest('GET',`${baseUrl}/todos`);
-  expect(response.ok).toBeTruthy();
-  expect(jsonSchemeValidation(response, schemaTodos));
-  const responseBody = JSON.parse(await response.text());
-  expect(responseBody.todos[0].title).toBe("process payments");
+  expect(jsonSchemeValidation(responseBody, schemaTodos));
   expect(responseBody.todos[0].doneStatus).toBeFalsy();
 });
 
-// test('Delete request', async () => {
-//   const response = await performRequest('DELETE',`${baseUrl}/todos/:${todoID}`, dataObj, apiKey);
-//   expect(response.ok).toBeTruthy();
-// });
+test("Should perform GET request and get one todo by id", async () => {
+  const response = await performRequest('GET',`${baseURL}/todos/1`);
+  expect(response.ok).toBeTruthy();
+  const responseBody = JSON.parse(await response.text());
+  expect(jsonSchemeValidation(responseBody, schemaTodos));
+  expect(responseBody.todos[0].title).toBe("scan paperwork");
+  expect(responseBody.todos[0].doneStatus).toBeFalsy();
+});
+
+test("Should perform POST request", async () => {
+  const response = await performRequest('POST',`${baseURL}/todos`, dataObj, apiKey);
+  console.log(response.headers.get("statusText"));
+  expect(response.ok).toBeTruthy();
+  const responseBody = JSON.parse(await response.text());
+  expect(jsonSchemeValidation(responseBody, schemaTodo));
+  todoID = responseBody.id;
+});
+
+
+test('Should DELETE todo', async () => {
+  const response = await performRequest('DELETE',`${baseURL}/todos/${todoID}`, dataObj, apiKey);
+  expect(response.ok).toBeTruthy();
+  
+});
+
+test("Shouldn't GET the deleted todo", async () => {
+  const response = await performRequest('GET', `${baseURL}/todos/${todoID}`);
+  expect(response.ok).toBeFalsy();
+});

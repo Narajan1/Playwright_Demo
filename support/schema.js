@@ -1,8 +1,9 @@
 import Ajv from 'ajv';
 
 export const schemaTodo = {
-  "type": "object",
-  "properties": {
+  //schema: "http://",
+  type: "object",
+  properties: {
     id: {
       type: "integer"
     },
@@ -10,19 +11,19 @@ export const schemaTodo = {
       type: "string"
     },
     doneStatus: {
-      "type": "boolean"
+      type: "boolean"
     },
     description: {
       type: "string"
     }
   },
-  required: ["id", "title", "doneStatus", "description"]
+  required: ['id', 'title', 'doneStatus', 'description']
 };
 
 
 export const schemaTodos = {
-  "type": 'object',
-  "properties": {
+  type: 'object',
+  properties: {
     todos: {
       type: 'array',
       items: {
@@ -43,17 +44,17 @@ export const schemaTodos = {
 };
 
 
-export function jsonSchemeValidation(response, schema) {
+export function jsonSchemeValidation(responseBody, schema) {
   const ajv = new Ajv();
   const validateTodo = ajv.compile(schema);
 
-  const isValid = validateTodo(response.todos);
+  const isValid = validateTodo(responseBody);
 
   if (!isValid) {
-    console.log("Invalid todo", validateTodo.errors);
+    //console.log("Invalid todo", validateTodo.errors);
     return false;
   } else {
-    console.log("Todo is valid");
+    //console.log("Todo is valid");
     return true;
   }
 }
