@@ -13,16 +13,15 @@ test.describe('Login functionality', async() => {
     await page.locator('input[data-codecept="username"]').fill('chewytester50@gmail.com');
     await page.locator('input[data-codecept="password"]').fill('Chewy1990!');
     await page.locator('button[data-codecept="loginButton"]').click();
-    await expect(page.locator('span[data-codecept="userElementHeader"]')).toBeVisible();
+    await expect(page.locator('[data-codecept="userElementHeader"]')).toBeVisible();
   });
 
   test('NEGATIVE-should not login with incorrect credentials', async ({ page }) => {
-    await page.pause();
     await page.locator('[data-codecept="login-icon"]').click();
     await page.locator('input[data-codecept="username"]').fill('11chewytester50@gmail.com');
-    await page.locator('input[data-codecept="password"]').fill('11Chewy1990!');
+    await page.getByPlaceholder('Password').fill('11Chewy1990!');
     await page.locator('button[data-codecept="loginButton"]').click();
-    await expect(page.locator('div.error')).toBeVisible();
+    await expect(page.locator('.error-msg')).toBeVisible();
   });
  
 });
