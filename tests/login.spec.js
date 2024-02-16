@@ -17,10 +17,11 @@ test.describe('Login functionality', async() => {
   });
 
   test('NEGATIVE-should not login with incorrect credentials', async ({ page }) => {
-    await page.locator('[data-codecept="login-icon"]').click();
-    await page.locator('input[data-codecept="username"]').fill('11chewytester50@gmail.com');
+    //await page.locator('[data-codecept="login-icon"]').click();
+    await page.getByTestId('login-icon').click();
+    await page.getByTestId('username').fill('11chewytester50@gmail.com');
     await page.getByPlaceholder('Password').fill('11Chewy1990!');
-    await page.locator('button[data-codecept="loginButton"]').click();
+    await page.getByTestId('loginButton').click();
     await expect(page.locator('.error-msg')).toBeVisible();
   });
  
