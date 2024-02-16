@@ -23,7 +23,7 @@ test.beforeAll("For getting header-challenger", async () => {
 });
 
 test("Should perform GET request and get all todos", async () => {
-  const response = await performRequest('GET',`${baseURL}/todos`);
+  const response = await performRequest('GET', `${baseURL}/todos`);
   expect(response.ok).toBeTruthy();
   const responseBody = JSON.parse(await response.text());
   expect(jsonSchemeValidation(responseBody, schemaTodos));
@@ -31,7 +31,7 @@ test("Should perform GET request and get all todos", async () => {
 });
 
 test("Should perform GET request and get one todo by id", async () => {
-  const response = await performRequest('GET',`${baseURL}/todos/1`);
+  const response = await performRequest('GET', `${baseURL}/todos/1`);
   expect(response.ok).toBeTruthy();
   const responseBody = JSON.parse(await response.text());
   expect(jsonSchemeValidation(responseBody, schemaTodos));
@@ -40,7 +40,7 @@ test("Should perform GET request and get one todo by id", async () => {
 });
 
 test("Should perform POST request", async () => {
-  const response = await performRequest('POST',`${baseURL}/todos`, dataObj, apiKey);
+  const response = await performRequest('POST', `${baseURL}/todos`, dataObj, apiKey);
   console.log(response.headers.get("statusText"));
   expect(response.ok).toBeTruthy();
   const responseBody = JSON.parse(await response.text());
@@ -50,9 +50,9 @@ test("Should perform POST request", async () => {
 
 
 test('Should DELETE todo', async () => {
-  const response = await performRequest('DELETE',`${baseURL}/todos/${todoID}`, dataObj, apiKey);
+  const response = await performRequest('DELETE', `${baseURL}/todos/${todoID}`, dataObj, apiKey);
   expect(response.ok).toBeTruthy();
-  
+
 });
 
 test("Shouldn't GET the deleted todo", async () => {
