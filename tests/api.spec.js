@@ -26,7 +26,7 @@ test("Should perform GET request and get all todos", async () => {
   const response = await performRequest('GET', `${baseURL}/todos`);
   expect(response.ok).toBeTruthy();
   const responseBody = JSON.parse(await response.text());
-  expect(jsonSchemeValidation(responseBody, schemaTodos));
+  expect(jsonSchemeValidation(responseBody, schemaTodos)).toBe(true);
   expect(responseBody.todos[0].doneStatus).toBeFalsy();
 });
 
@@ -34,7 +34,7 @@ test("Should perform GET request and get one todo by id", async () => {
   const response = await performRequest('GET', `${baseURL}/todos/1`);
   expect(response.ok).toBeTruthy();
   const responseBody = JSON.parse(await response.text());
-  expect(jsonSchemeValidation(responseBody, schemaTodos));
+  expect(jsonSchemeValidation(responseBody, schemaTodos)).toBe(true);
   expect(responseBody.todos[0].title).toBe("scan paperwork");
   expect(responseBody.todos[0].doneStatus).toBeFalsy();
 });
@@ -44,7 +44,7 @@ test("Should perform POST request", async () => {
   console.log(response.headers.get("statusText"));
   expect(response.ok).toBeTruthy();
   const responseBody = JSON.parse(await response.text());
-  expect(jsonSchemeValidation(responseBody, schemaTodo));
+  expect(jsonSchemeValidation(responseBody, schemaTodo)).toBe(true);
   todoID = responseBody.id;
 });
 
